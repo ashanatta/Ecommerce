@@ -1,6 +1,42 @@
 <?php
-
+session_start();
 require 'config.php';
+
+// Handle Add to Cart
+if (isset($_GET['product_id'])) {
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: login.php"); // Redirect to login if the user is not logged in
+        exit();
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $product_id = intval($_GET['product_id']);
+
+    // Check if product is already in the cart for this user
+    $check_cart_sql = "SELECT * FROM cart WHERE user_id = ? AND product_id = ?";
+    $stmt = $conn->prepare($check_cart_sql);
+    $stmt->execute([$user_id, $product_id]);
+    $product_in_cart = $stmt->fetch();
+
+    if ($product_in_cart) {
+        // If product already exists in cart, increment the quantity
+        $update_cart_sql = "UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?";
+        $stmt = $conn->prepare($update_cart_sql);
+        $stmt->execute([$user_id, $product_id]);
+    } else {
+        // If product is not in cart, insert it
+        $insert_cart_sql = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, 1)";
+        $stmt = $conn->prepare($insert_cart_sql);
+        $stmt->execute([$user_id, $product_id]);
+    }
+
+    // Redirect back to the product list with a success message
+    $_SESSION['success'] = "Product added to cart successfully.";
+    header("Location: list_products.php");
+    exit();
+}
+
+// Product listing and pagination logic
 $limit = 6;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
@@ -10,6 +46,8 @@ $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $products = $stmt->fetchAll();
+
+// Load more logic
 if (isset($_GET['load_more'])) {
     foreach ($products as $product) {
         echo "
@@ -44,6 +82,16 @@ if (isset($_GET['load_more'])) {
     <?php include 'navbar.php'; ?>
     <div class="container mt-5">
         <h2 class="text-center m-3">Products</h2>
+
+        <!-- Display success message -->
+        <?php if (isset($_SESSION['success'])) : ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php echo $_SESSION['success']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
+
         <div class="row" id="product-list">
             <?php foreach ($products as $product): ?>
                 <div class="col-md-4">

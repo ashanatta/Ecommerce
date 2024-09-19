@@ -26,7 +26,8 @@
         $stmt = $conn->prepare($sql);
         $stmt->execute([$product_name, $price, $description]);
 
-        echo "Product added successfully.";
+        header("Location: list_products.php");
+        exit;
     }
     ?>
 
@@ -46,6 +47,7 @@
                 <textarea class="form-control" id="description" name="description" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary" name="add_product">Add Product</button>
+            <a href="list_products.php" class="btn btn-danger">Back</a>
         </form>
     </div>
 </body>

@@ -1,6 +1,10 @@
 <?php
-session_start();
+
 require 'config.php';
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 $cart_count = 0;
 if (isset($_SESSION['user_id'])) {
