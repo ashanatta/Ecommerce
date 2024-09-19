@@ -2,7 +2,6 @@
 session_start();
 require 'config.php';
 
-// Fetch the cart count for the logged-in user
 $cart_count = 0;
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -15,10 +14,7 @@ if (isset($_SESSION['user_id'])) {
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <!-- Logo on the left -->
         <a class="navbar-brand" href="#">Shop</a>
-
-        <!-- Center links in the middle -->
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
@@ -39,13 +35,10 @@ if (isset($_SESSION['user_id'])) {
             </ul>
         </div>
 
-        <!-- Register/Login or Logout button based on user login status -->
         <div class="d-flex">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <!-- Logout button if the user is logged in -->
                 <a class="nav-link" href="logout.php">Logout</a>
             <?php else: ?>
-                <!-- Register and Login buttons if the user is not logged in -->
                 <a class="nav-link" href="register.php">Register</a>
                 <a class="nav-link" href="login.php">Login</a>
             <?php endif; ?>

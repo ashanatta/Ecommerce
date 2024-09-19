@@ -1,22 +1,15 @@
 <?php
 
 require 'config.php';
-
-
-// Set the number of products to load at a time
 $limit = 6;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
-
-// Fetch products with pagination
 $sql = "SELECT * FROM products LIMIT :limit OFFSET :offset";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $products = $stmt->fetchAll();
-
-// Check if it's an AJAX request for loading more
 if (isset($_GET['load_more'])) {
     foreach ($products as $product) {
         echo "
@@ -32,7 +25,7 @@ if (isset($_GET['load_more'])) {
             </div>
         ";
     }
-    exit(); // Only return the products, no need to return the entire page
+    exit();
 }
 ?>
 
@@ -76,7 +69,6 @@ if (isset($_GET['load_more'])) {
     <script>
         let currentPage = 1;
 
-        // Load more products on button click
         $('#load-more').click(function() {
             currentPage++;
             $.ajax({

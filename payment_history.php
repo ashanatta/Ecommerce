@@ -1,16 +1,14 @@
 <?php
 session_start();
 
-require 'config.php'; // Include your database connection file
-// Check if the user is logged in
+require 'config.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-// Query to fetch payment history with user's name
 $sql = "SELECT payments.id, users.username, payments.amount, payments.payment_status, payments.created_at
         FROM payments
-        JOIN users ON payments.user_id = users.id"; // Join on user_id to get the user's name
+        JOIN users ON payments.user_id = users.id";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,7 +21,6 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment History</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -63,7 +60,6 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </table>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <?php include 'footer.php'; ?>
 

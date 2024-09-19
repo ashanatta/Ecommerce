@@ -1,15 +1,11 @@
 <?php
 session_start();
-
-// Check if the user is logged in, if not redirect to login page
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
 require 'config.php';
-
-// Fetch products in the user's cart
 $user_id = $_SESSION['user_id'];
 $sql = "SELECT products.id, products.product_name, products.description, products.price FROM cart 
         JOIN products ON cart.product_id = products.id

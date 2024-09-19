@@ -14,16 +14,12 @@
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-        // Check if email already exists
         $sql = "SELECT * FROM users WHERE email = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$email]);
-
         if ($stmt->rowCount() > 0) {
             echo "Email already exists.";
         } else {
-            // Insert user data into the database
             $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->execute([$username, $email, $password]);
